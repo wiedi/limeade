@@ -28,7 +28,7 @@ def account_add(request):
 
 @login_required	
 def account_edit(request, slug):
-	"Change a ftp accounts password"
+	"Change an ftp accounts password"
 	account = Account.objects.get(pk=slug)
 	if account.vhost.domain.owner() != request.user:
 		return redirect('limeade_ftp_account_list')
@@ -43,7 +43,7 @@ def account_edit(request, slug):
 
 @login_required
 def account_delete(request, slug):
-	"remove a ftp account"
+	"remove an ftp account"
 	ac = get_object_or_404(Account, pk = slug)
 	if ac.vhost.domain.owner() == request.user:
 		ac.delete()
