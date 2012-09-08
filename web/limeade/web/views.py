@@ -12,11 +12,13 @@ from forms import VHostForm, VHostEditForm, RedirectForm, PoolIPForm, SSLCertFor
 
 @login_required
 def vhost_list(request):
+	"List of web-vhosts"
 	domains = get_domains(request.user)
 	return object_list(request, VHost.objects.filter(domain__in = domains), template_name='limeade_web/vhost_list.html')
 
 @login_required
 def vhost_add(request):
+	"Create a new web-vhost"
 	form = VHostForm(request.POST or None)
 	form.fields['domain'].queryset = get_domains(request.user)
 	if form.is_valid():
@@ -27,6 +29,7 @@ def vhost_add(request):
 
 @login_required	
 def vhost_edit(request, slug):
+	"Edit details of a web-vhost"
 	account = VHost.objects.get(pk=slug)
 	form = VHostEditForm(request.POST or None, instance=account)
 	if form.is_valid():
@@ -37,6 +40,7 @@ def vhost_edit(request, slug):
 
 @login_required
 def vhost_delete(request, slug):
+	"Remove a web-vhost"
 	v = get_object_or_404(VHost, pk = slug)
 	if v.domain.owner() == request.user:
 		v.delete()
@@ -46,6 +50,7 @@ def vhost_delete(request, slug):
 
 @login_required
 def vhost_catchall_set(request, slug):
+	"Set this vhost as catch-all for the domain"
 	v = get_object_or_404(VHost, pk = slug)
 	if v.domain.owner() == request.user:
 		DefaultVHost(vhost=v, domain=v.domain).save()
@@ -55,6 +60,7 @@ def vhost_catchall_set(request, slug):
 
 @login_required
 def vhost_catchall_delete(request, slug):
+	"Disable catch-all for this domain"
 	v = get_object_or_404(DefaultVHost, pk = slug)
 	if v.domain.owner() == request.user:
 		v.delete()
@@ -67,11 +73,13 @@ def vhost_catchall_delete(request, slug):
 # redirects
 @login_required
 def redirect_list(request):
+	"List HTTP redirects"
 	domains = get_domains(request.user)
 	return object_list(request, Redirect.objects.filter(domain__in = domains), template_name='limeade_web/redirect_list.html')
 
 @login_required
 def redirect_add(request):
+	"Create a new HTTP redirect"
 	form = RedirectForm(request.POST or None)
 	form.fields['domain'].queryset = get_domains(request.user)
 	if form.is_valid():
@@ -82,6 +90,7 @@ def redirect_add(request):
 
 @login_required	
 def redirect_edit(request, slug):
+	"Edit a HTTP redirect"
 	r = Redirect.objects.get(pk=slug)
 	form = RedirectForm(request.POST or None, instance=r)
 	form.fields['domain'].queryset = get_domains(request.user)
@@ -93,6 +102,7 @@ def redirect_edit(request, slug):
 
 @login_required
 def redirect_delete(request, slug):
+	"Remove a HTTP Redirect"
 	r = get_object_or_404(Redirect, pk = slug)
 	if r.domain.owner() == request.user:
 		r.delete()
@@ -133,10 +143,12 @@ def poolip_add(request):
 # ssl certs
 @login_required
 def sslcert_list(request):
+	"List a users SSL certificates"
 	return object_list(request, SSLCert.objects.filter(owner = request.user), template_name='limeade_web/sslcert_list.html')
 
 @login_required
 def sslcert_add(request):
+	"Add a new SSL certificate"
 	form = SSLCertForm(request.POST or None, request.FILES or None)
 	if form.is_valid():
 		c = SSLCert()
@@ -153,6 +165,7 @@ def sslcert_add(request):
 
 @login_required
 def sslcert_delete(request, slug):
+	"Remove a SSL certificate"
 	cert = get_object_or_404(SSLCert, pk = slug)
 	if cert.owner == request.user:
 		cert.delete()

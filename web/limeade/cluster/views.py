@@ -7,11 +7,13 @@ from forms import ServerForm, RegionForm
 
 @login_required
 def server_list(request):
+	"Show a list of servers."
 	return object_list(request, Server.objects.all(),
 			template_name='limeade_cluster/server_list.html')
 
 @login_required
 def server_add(request):
+	"Add a new server to the cluster"
 	form = ServerForm(request.POST or None)
 	if form.is_valid():
 		form.save()
@@ -21,6 +23,7 @@ def server_add(request):
 
 @login_required	
 def server_edit(request, slug):
+	"Edit a server"
 	server = Server.objects.get(pk=slug)
 	form = ServerForm(request.POST or None, instance=server)
 	if form.is_valid():
@@ -32,6 +35,7 @@ def server_edit(request, slug):
 
 @login_required
 def server_enable(request, slug):
+	"Enable a server after a maintenance is over"
 	s = get_object_or_404(Server, pk = slug)
 	s.enabled = True
 	s.save()
@@ -40,6 +44,7 @@ def server_enable(request, slug):
 
 @login_required
 def server_disable(request, slug):
+	"Put a server into maintenance"
 	s = get_object_or_404(Server, pk = slug)
 	s.enabled = False
 	s.save()
@@ -48,6 +53,7 @@ def server_disable(request, slug):
 
 @login_required
 def server_delete(request, slug):
+	"Remote a server from the cluster"
 	s = get_object_or_404(Server, pk = slug)
 	s.delete()
 	return redirect('limeade_cluster_server_list')

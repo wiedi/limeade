@@ -9,11 +9,13 @@ from forms import AccountForm, AccountEditForm
 
 @login_required
 def account_list(request):
+	"Show a list of FTP accounts"
 	return object_list(request, Account.objects.filter(vhost__in=list(get_vhosts(request.user))),
 			template_name='limeade_ftp/account_list.html')
 
 @login_required
 def account_add(request):
+	"Add a new FTP account"
 	form = AccountForm(request.POST or None)
 	form.fields['vhost'].queryset = get_vhosts(request.user)
 	if form.is_valid():
@@ -26,6 +28,7 @@ def account_add(request):
 
 @login_required	
 def account_edit(request, slug):
+	"Change a ftp accounts password"
 	account = Account.objects.get(pk=slug)
 	if account.vhost.domain.owner() != request.user:
 		return redirect('limeade_ftp_account_list')
@@ -40,6 +43,7 @@ def account_edit(request, slug):
 
 @login_required
 def account_delete(request, slug):
+	"remove a ftp account"
 	ac = get_object_or_404(Account, pk = slug)
 	if ac.vhost.domain.owner() == request.user:
 		ac.delete()

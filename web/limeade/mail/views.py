@@ -10,11 +10,13 @@ from forms import AccountForm, AccountEditForm, RedirectForm
 
 @login_required
 def account_list(request):
+	"List all mail accounts of a user"
 	domains = get_domains(request.user)
 	return object_list(request, Account.objects.filter(domain__in = domains), template_name='limeade_mail/account_list.html')
 
 @login_required
 def account_add(request):
+	"Add a new mail account"
 	form = AccountForm(request.POST or None)
 	form.fields['domain'].queryset = get_domains(request.user)
 	if form.is_valid():
@@ -27,6 +29,7 @@ def account_add(request):
 
 @login_required	
 def account_edit(request, slug):
+	"Set a new password for an email account"
 	account = Account.objects.get(pk=slug)
 	if account.domain.owner() != request.user:
 		return redirect('limeade_mail_account_list')		
@@ -41,6 +44,7 @@ def account_edit(request, slug):
 
 @login_required
 def account_delete(request, slug):
+	"Remove a mail account"
 	ac = get_object_or_404(Account, pk = slug)
 	if ac.domain.owner() == request.user:
 		ac.delete()
@@ -50,11 +54,13 @@ def account_delete(request, slug):
 # redirects
 @login_required
 def redirect_list(request):
+	"List all mail redirects"
 	domains = get_domains(request.user)
 	return object_list(request, Redirect.objects.filter(domain__in = domains), template_name='limeade_mail/redirect_list.html')
 
 @login_required
 def redirect_add(request):
+	"Create a new mail redirect"
 	form = RedirectForm(request.POST or None)
 	form.fields['domain'].queryset = get_domains(request.user)
 	if form.is_valid():
@@ -65,6 +71,7 @@ def redirect_add(request):
 
 @login_required	
 def redirect_edit(request, slug):
+	"Edit a mail redirect"
 	r = Redirect.objects.get(pk=slug)
 	if r.domain.owner() != request.user:
 		return redirect('limeade_mail_redirect_list')		
@@ -78,6 +85,7 @@ def redirect_edit(request, slug):
 
 @login_required
 def redirect_delete(request, slug):
+	"Remove a mail redirect"
 	r = get_object_or_404(Redirect, pk = slug)
 	if r.domain.owner() == request.user:
 		r.delete()
