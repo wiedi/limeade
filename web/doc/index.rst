@@ -9,12 +9,39 @@ Welcome to limeade's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 6
+
+.. automodule:: limeade.system.models
+   :members:
+
+.. automodule:: limeade.cloud.views.api
+   :members:
+
+.. automodule:: limeade.cloud.views.instance
+   :members:
+
+.. automodule:: limeade.cloud.views.ssh
+   :members:
 
 .. automodule:: limeade.cloud.views.vnc
    :members:
 
-.. automodule:: limeade.system.models
+.. automodule:: limeade.cluster.views
+   :members:
+
+.. automodule:: limeade.ftp.views
+   :members:
+
+.. automodule:: limeade.mail.views
+   :members:
+
+.. automodule:: limeade.mysql.views
+   :members:
+
+.. automodule:: limeade.system.views
+   :members:
+
+.. automodule:: limeade.web.views
    :members:
 
 

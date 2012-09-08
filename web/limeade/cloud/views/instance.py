@@ -30,6 +30,7 @@ vm_state = {
 
 @login_required
 def instance_list(request):
+    "Show a list of the current users instances"
     instances = []
     for i in Instance.objects.filter(owner=request.user):
         if i.active:
@@ -53,6 +54,7 @@ def instance_list(request):
 
 @login_required
 def instance_add(request):
+    "View for adding a new instance"
     form = InstanceForm(request.POST or None)
     form.fields['base_image'].choices = send_task("cloud.list_base_images", routing_key='limeade.cloud').get()
     form.fields['product'].queryset = Product.objects.filter(
@@ -93,6 +95,7 @@ def instance_add(request):
 
 @login_required
 def instance_delete(request, slug):
+    "Delete a instance"
     i = get_object_or_404(Instance, pk=slug)
     
     if i.owner == request.user:
@@ -104,7 +107,8 @@ def instance_delete(request, slug):
 
 @login_required
 def instance_start(request, slug):
-    
+    "Start a instance"
+
     i = get_object_or_404(Instance, pk=slug)
     
     try:
@@ -120,6 +124,8 @@ def instance_start(request, slug):
 
 @login_required
 def instance_stop(request, slug):
+    "Stop a instance"
+
     i = get_object_or_404(Instance, pk=slug)
     
     try:
@@ -135,6 +141,7 @@ def instance_stop(request, slug):
 
 @login_required
 def instance_restart(request, slug):
+    "Restart a instance"
     i = get_object_or_404(Instance, pk = slug)
     
     try:

@@ -9,6 +9,14 @@ from limeade.cloud.models import Instance
 
 
 def instance_activate(request):
+    """Called when an instance is done provisioning.
+    
+    Requires two GET Parameters:
+    
+        - site_api_key: for security reasons
+        - instance: ID of the instance to activate
+    
+    """
     if request.GET.get('site_api_key', '') != settings.SITE_API_KEY:
         return HttpResponse(serialize({
             "status": "failure",
@@ -28,6 +36,18 @@ def instance_activate(request):
 
 
 def instance_info(request, slug):
+    """
+    Returns information an instance can use to configure itself.
+    
+    It includes:
+    
+        - the hostname
+        - SSH Keys
+    
+    :param request: the request object
+    :param slug: the mac address of the instance
+        - 
+    """
     i = get_object_or_404(Instance, mac_addr=slug)
     
     response = {'hostname': i.hostname}

@@ -10,6 +10,7 @@ import re
 
 @login_required
 def db_list(request):
+	"Show a list of the users Databases"
 	try:
 		dbs = send_task("mysql.list_dbs", kwargs={'user': request.user.username},routing_key='limeade.mysql').get(timeout=5)
 	except TimeoutError:
@@ -21,24 +22,29 @@ def db_list(request):
 
 @login_required
 def db_add(request):
+	"""
+	Form to add a new Database.
+	Each database has a respective user with its own credentials.
+	"""
 	form = DBForm(request.POST or None)
 	if form.is_valid():
 		send_task("mysql.create_db", kwargs={
-				'user':     request.user.username,
-				'name':     form.cleaned_data['name'],
+				'user':		request.user.username,
+				'name':		form.cleaned_data['name'],
 				'password': form.cleaned_data['password'],
 			}, routing_key='limeade.mysql')
 		return redirect('limeade_mysql_db_list')
 	return render_to_response("limeade_mysql/db_add.html",
 		{"form": form}, context_instance = RequestContext(request))
 
-@login_required	
+@login_required 
 def db_edit(request, slug):
+	"Form to set a new password for the database"
 	form = DBEditForm(request.POST or None)
 	if form.is_valid():
 		send_task("mysql.edit_db", kwargs={
-				'user':     request.user.username,
-				'name':     slug,
+				'user':		request.user.username,
+				'name':		slug,
 				'password': form.cleaned_data['password'],
 			}, routing_key='limeade.mysql')
 		return redirect('limeade_mysql_db_list')
@@ -47,12 +53,13 @@ def db_edit(request, slug):
 
 @login_required
 def db_delete(request, slug):
+	"Drop a database"
 	if not re.match(r'[a-zA-Z0-9-]+$', slug):
 		return redirect('limeade_mysql_db_list')
 		
 	send_task("mysql.delete_db", kwargs={
-			'user':     request.user.username,
-			'name':     slug,
+			'user':		request.user.username,
+			'name':		slug,
 		}, routing_key='limeade.mysql')
 	return redirect('limeade_mysql_db_list')
 	
